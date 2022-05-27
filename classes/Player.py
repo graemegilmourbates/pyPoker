@@ -9,12 +9,48 @@ else:
 
 import random
 
+class HumanPlayer:
+    def observeHand(self):
+        self.hand = Hand(self.hand)
+
+    def displayHand(self):
+        hand = ""
+        for card in self.hand.hand:
+            hand += str(card)
+            hand += " | "
+        print(hand)
+
+    def calculateBet(self, toCall):
+        print("\n")
+        self.displayHand()
+        print("\n")
+        bet = input("Your bet: ")
+        try:
+            bet = int(bet)
+        except ValueError:
+            if bet.upper() == "CHECK":
+                bet = 0
+            elif bet.upper() == "FOLD":
+                bet = -1
+                return -1
+            elif bet.upper() == "CALL":
+                bet = toCall
+        self.chips -= bet
+        self.currentBet += bet
+        return bet
+
+
+    def __init__(self):
+        self.currentBet=0
+        self.chips=250
+        self.hand = []
+        self.name = input("Enter Your Name: ")
+
 class Player:
     def observeHand(self):
         self.hand = Hand(self.hand)
 
     def displayHand(self):
-        print("Got: %s with a rank of: %s" %(self.hand.got, self.hand.rank))
         hand = ""
         for card in self.hand.hand:
             hand += str(card)
@@ -23,7 +59,14 @@ class Player:
 
     def calculateBet(self, toCall):
         bet = -1
+        if self.playStyle == "Confident":
+            impulse = random.randrange(2,10)
+        elif self.playStyle == "Mid":
+            impulse = random.randrange(0,6)
+        else:
+            impulse = random.randrange(-2,5)
         max_bet = self.hand.rank // 3
+        max_bet += impulse
         # Doesnt bet on just hi card
         if self.hand.rank < 14:
             if toCall == 0:
@@ -56,7 +99,13 @@ class Player:
     def __init__(self, name):
         #Define play styles
         #Confident, Conservative, Mid
-        playStyle = ""
+        confidence = random.randint(0,3)
+        if confidence == 0:
+            self.playStyle = "Conservative"
+        elif confidence == 1:
+            self.playStyle = "Mid"
+        else:
+            self.playStyle = "Confident"
         self.currentBet=0
         self.chips=250
         self.hand = []
