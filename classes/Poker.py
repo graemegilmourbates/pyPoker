@@ -10,6 +10,7 @@ else:
     from Player import *
 
 import os
+import time
 
 class FiveCardDraw:
     def deal(self):
@@ -36,19 +37,23 @@ class FiveCardDraw:
                     to_play = 0
                 else:
                     to_play = self.hiBet - player.currentBet
-                    print("Player %s must call %s to stay in"%(player.name, to_play))
+                    print("%s must call %s to stay in"%(player.name, to_play))
                 bet = player.calculateBet(to_play)
                 if bet < 0:
                     self.currentPlayers.pop(i)
                     #player folds
-                    print("Player %s folds"%player.name)
+                    print("%s folds\n"%player.name)
+                    time.sleep(1)
                 else:
                     if bet == 0:
-                        print("Player %s Checks"%(player.name))
+                        print("%s Checks\n"%(player.name))
+                        time.sleep(1)
                     elif bet == to_play:
-                        print("Player %s Calls\n"%player.name)
+                        print("%s Calls\n"%player.name)
+                        time.sleep(1)
                     else:
-                        print("Player %s bets %s"%(player.name, bet))
+                        print("%s bets %s\n"%(player.name, bet))
+                        time.sleep(1)
                     if bet > 0:
                         self.hiBet = player.currentBet
                     self.pot += bet
@@ -63,14 +68,14 @@ class FiveCardDraw:
     def presentWinner(self):
         currentWinner = None
         for player in self.currentPlayers:
-            print("Player %s hand rank: %s"%(player.name, player.hand.rank))
             if not currentWinner:
                 currentWinner = player
             elif currentWinner.hand.rank < player.hand.rank:
                 currentWinner = player
         currentWinner.chips += self.pot
-        print("Player %s wins pot of %s and now has %s chips"%
+        print("%s wins pot of %s and now has %s chips"%
             (currentWinner.name,self.pot, currentWinner.chips))
+        print("Winners Hand:")
         currentWinner.displayHand()
         input("Press enter to continue: ")
 

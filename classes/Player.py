@@ -8,6 +8,7 @@ else:
     from Hand import *
 
 import random
+import math
 
 class HumanPlayer:
     def observeHand(self):
@@ -18,6 +19,7 @@ class HumanPlayer:
         for card in self.hand.hand:
             hand += str(card)
             hand += " | "
+        print("Your Hand:")
         print(hand)
 
     def calculateBet(self, toCall):
@@ -34,6 +36,8 @@ class HumanPlayer:
                 bet = -1
                 return -1
             elif bet.upper() == "CALL":
+                bet = toCall
+            else:
                 bet = toCall
         self.chips -= bet
         self.currentBet += bet
@@ -59,16 +63,22 @@ class Player:
 
     def calculateBet(self, toCall):
         bet = -1
+        r = (self.hand.rank/124)
+        max = round((self.chips) * r)
         if self.playStyle == "Confident":
-            impulse = random.randrange(2,10)
+            max_bet = max
         elif self.playStyle == "Mid":
-            impulse = random.randrange(0,6)
+            if r > 0.75:
+                max_bet = round(max * r)
+            elif r > 0.4:
+                max_bet = abs(round(max * (math.cos(90-r))))
+            else:
+                max_bet = max//3
         else:
-            impulse = random.randrange(-2,5)
-        max_bet = self.hand.rank // 3
-        max_bet += impulse
+            max_bet = round(max*r)
+
         # Doesnt bet on just hi card
-        if self.hand.rank < 14:
+        if round(r*100) < 9:
             if toCall == 0:
                 bet = 0
                 self.currentBet = bet
@@ -88,7 +98,7 @@ class Player:
                 self.chips -= bet
             elif toCall == 0:
                 bet = 0
-            elif (max_bet) > (toCall-3):
+            elif (max_bet) > (toCall-5):
                 bet = toCall
                 self.currentBet += bet
                 self.chips -= bet
@@ -99,10 +109,10 @@ class Player:
     def __init__(self, name):
         #Define play styles
         #Confident, Conservative, Mid
-        confidence = random.randint(0,3)
-        if confidence == 0:
+        confidence = random.randint(0, 100)
+        if confidence < 20:
             self.playStyle = "Conservative"
-        elif confidence == 1:
+        elif confidence < 80 :
             self.playStyle = "Mid"
         else:
             self.playStyle = "Confident"

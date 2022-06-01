@@ -49,7 +49,8 @@ def count_matches(hand, currentMatches):
         if card.value == hand[i].value:
             hand.pop(i)
             count += 1
-        i+=1
+        else:
+            i+=1
     if count > 1:
         currentMatches.append([card.value, count])
     return count_matches(hand, currentMatches)
