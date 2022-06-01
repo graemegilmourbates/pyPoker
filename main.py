@@ -12,6 +12,7 @@ PLAYER_NAMES = {
     2: "Bruce",
     3: "Clark",
     4: "Jeane",
+    5: "Billy",
     6: "Beatrice",
     7: "Shaggy",
     8: "Snoop",
@@ -33,17 +34,19 @@ def play_round(game):
     testGame.presentWinner()
 
 if __name__ == "__main__":
-    players = generate_players(3)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    player_count = input("How many players? 1-9:  ")
+    player_count = int(player_count)
+    players = generate_players(player_count)
     newHuman = HumanPlayer()
     players.append(newHuman)
     testGame = FiveCardDraw(players)
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         for player in testGame.players:
-            print("%s: %s Chips."%(player.name, player.chips))
-        print("You have %s Chips." % newHuman.chips)
+            print("-- %s: %s Chips."%(player.name, player.chips))
         toPlay = input("Want to play a round?\n")
-        if toPlay.upper() == "YES":
+        if toPlay[0].upper() == "Y":
             play_round(testGame)
         else:
             break

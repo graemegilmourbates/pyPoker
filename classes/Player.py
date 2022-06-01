@@ -19,7 +19,7 @@ class HumanPlayer:
         for card in self.hand.hand:
             hand += str(card)
             hand += " | "
-        print("Your Hand:")
+        print("You have %s Chips. Your Hand:"%(self.chips))
         print(hand)
 
     def calculateBet(self, toCall):
@@ -29,6 +29,8 @@ class HumanPlayer:
         bet = input("Your bet: ")
         try:
             bet = int(bet)
+            if(bet < toCall):
+                return -1
         except ValueError:
             if bet.upper() == "CHECK":
                 bet = 0
@@ -98,7 +100,7 @@ class Player:
                 self.chips -= bet
             elif toCall == 0:
                 bet = 0
-            elif (max_bet) > (toCall-5):
+            elif self.currentBet/toCall > 1:
                 bet = toCall
                 self.currentBet += bet
                 self.chips -= bet

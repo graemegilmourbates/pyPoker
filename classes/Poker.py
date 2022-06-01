@@ -14,18 +14,20 @@ import time
 
 class FiveCardDraw:
     def deal(self):
+        self.currentPlayers = []
+        for player in self.players:
+            if player.chips > 4:
+                self.currentPlayers.append(player)
+                player.chips -= 5
+                self.pot += 5
         self.deck.shuffle()
         i = 0
-        self.currentPlayers = []
         while(i<5):
-            for player in self.players:
+            for player in self.currentPlayers:
                 card = self.deck.cards.pop(0)
                 player.hand.append(card)
             i+=1
-        for player in self.players:
-            self.currentPlayers.append(player)
-            player.chips -= 5
-            self.pot += 5
+        for player in self.currentPlayers:
             player.observeHand()
 
     def takeBets(self):
@@ -39,7 +41,7 @@ class FiveCardDraw:
                     to_play = self.hiBet - player.currentBet
                     print("%s must call %s to stay in"%(player.name, to_play))
                 bet = player.calculateBet(to_play)
-                if bet < 0:
+                if bet < to_play:
                     self.currentPlayers.pop(i)
                     #player folds
                     print("%s folds\n"%player.name)
@@ -67,16 +69,31 @@ class FiveCardDraw:
 
     def presentWinner(self):
         currentWinner = None
+        currentWinners = []
         for player in self.currentPlayers:
             if not currentWinner:
-                currentWinner = player
-            elif currentWinner.hand.rank < player.hand.rank:
-                currentWinner = player
-        currentWinner.chips += self.pot
-        print("%s wins pot of %s and now has %s chips"%
-            (currentWinner.name,self.pot, currentWinner.chips))
-        print("Winners Hand:")
-        currentWinner.displayHand()
+                currentWinner = player.hand.rank
+                currentWinners = [player]
+            elif currentWinner < player.hand.rank:
+                currentWinner = player.hand.rank
+                currentWinners = [player]
+            elif currentWinner == player.hand.rank:
+                currentWinners.append(player)
+        if len(currentWinners) == 1:
+            winner = currentWinners[0]
+            winner.chips += self.pot
+            print("%s wins pot of %s and now has %s chips"%
+                (winner.name,self.pot, winner.chips))
+            print("Winners Hand:")
+            winner.displayHand()
+        else:
+            print("Split Pot!!!")
+            splits = len(currentWinners)
+            pot_split = self.pot/splits
+            for player in currentWinners:
+                print("%s wins %s"%(player.name, pot_split))
+                print("%s hand:"%player.name)
+                player.displayHand()
         input("Press enter to continue: ")
 
     def newRound(self):
