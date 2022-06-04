@@ -12,7 +12,7 @@ else:
 import os
 import time
 
-class FiveCardDraw:
+class FiveCardStud:
     def deal(self):
         self.currentPlayers = []
         for player in self.players:
@@ -66,6 +66,75 @@ class FiveCardDraw:
                 pass
             else:
                 self.takeBets()
+
+    def takeGuiBets(self, player):
+        if self.hiBet == player.currentBet:
+            to_play = 0
+        else:
+            to_play = self.hiBet - player.currentBet
+        print("To play: %s"%to_play)
+        bet = player.calculateBet(to_play)
+        print("Bet %s"%bet)
+        if bet < to_play:
+            return(-1)
+        else:
+            self.pot += bet
+            if bet < 0:
+                return(-1)
+            if bet > to_play:
+                self.hiBet = player.currentBet
+            if bet == 0:
+                return(0)
+            elif bet == to_play:
+                return(1)
+            else:
+                return(2)
+
+    def takeUserGuiBet(self, user, bet):
+        if user.currentBet == self.hiBet:
+            to_play = 0
+        else:
+            to_play = self.hiBet - user.currentBet
+        if bet < to_play:
+            return(-1)
+        else:
+            self.pot += bet
+            user.chips -= bet
+            if bet > to_play:
+                self.hiBet = user.currentBet + bet
+            if bet == 0:
+                return(0)
+            elif bet == to_play:
+                user.currentBet += bet
+                return(1)
+            else:
+                user.currentBet += bet
+                return(2)
+
+    def presentGuiWinner(self):
+        currentWinner = None
+        currentWinners = []
+        for player in self.currentPlayers:
+            if not currentWinner:
+                currentWinner = player.hand.rank
+                currentWinners = [player]
+            elif currentWinner < player.hand.rank:
+                currentWinner = player.hand.rank
+                currentWinners = [player]
+            elif currentWinner == player.hand.rank:
+                currentWinners.append(player)
+        if len(currentWinners) == 1:
+            winner = currentWinners[0]
+            winner.chips += self.pot
+            return winner
+        else:
+            print("Split Pot!!!")
+            splits = len(currentWinners)
+            pot_split = self.pot/splits
+            for player in currentWinners:
+                player.chips += pot_split
+            return currentWinners
+        input("Press enter to continue: ")
 
     def presentWinner(self):
         currentWinner = None

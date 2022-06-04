@@ -5,6 +5,8 @@ from classes.Player import *
 from classes.Poker import *
 
 import os
+import tkinter as tk
+from tkinter import ttk
 
 PLAYER_NAMES = {
     0: "Mary",
@@ -41,6 +43,12 @@ if __name__ == "__main__":
     newHuman = HumanPlayer()
     players.append(newHuman)
     testGame = FiveCardDraw(players)
+    seats = []
+    # i = 0
+    # for player in players:
+    #     player_label = tk.Label(root, text=player.name, font=("Helvetica", 16))
+    #     player_label.place(x=i*100, y=10)
+    #     i += 1
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         for player in testGame.players:

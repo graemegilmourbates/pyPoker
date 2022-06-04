@@ -46,11 +46,11 @@ class HumanPlayer:
         return bet
 
 
-    def __init__(self):
+    def __init__(self,name):
         self.currentBet=0
         self.chips=250
         self.hand = []
-        self.name = input("Enter Your Name: ")
+        self.name = name
 
 class Player:
     def observeHand(self):
